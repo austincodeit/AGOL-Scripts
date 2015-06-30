@@ -1,4 +1,4 @@
 # AGOL-Scripts
-Miscellaneous Scripts for Accessing ArcGIS Online Data Programmatically 
+Miscellaneous Python scripts for accessing ArcGIS Online data programmatically 
 
-Exactly.
+That's pretty much it.
