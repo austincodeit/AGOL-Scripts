@@ -11,8 +11,6 @@ Load additional features to a service
 Query data from AGOL feature service and write feature service data to a basic report.
 
 ##### Proactive_Property_Maintenance_Automation.py
-Convert word documents to PDFs, merge PDFs, upload PDF attachments to ArcGIS Online feature service.
-
-Note some dependencies: win32com,  pyPdf, and a little program called Microsoft Word
+Group data and push features to AGOL feature service.
 
 
