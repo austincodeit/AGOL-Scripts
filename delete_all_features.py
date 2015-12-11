@@ -1,5 +1,5 @@
 #  delete_all_features.py
-#  deletes all features from the ArcGIS Online feature service you rpvide
+#  deletes all features from an ArcGIS Online feature service
 #  created by John Clary for the Austin Code Department, Nov 2015
 
 import json
