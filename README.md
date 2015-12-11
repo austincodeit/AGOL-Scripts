@@ -13,4 +13,5 @@ Query data from AGOL feature service and write feature service data to a basic r
 ##### Proactive_Property_Maintenance_Automation.py
 Group data and push features to AGOL feature service.
 
-
+##### delete_all_features.py
+You guessed it--delete all features from an ArcGIS Online feature service.
