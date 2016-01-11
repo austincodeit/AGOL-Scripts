@@ -1,22 +1,27 @@
 import json
+import requests
 import getpass
 import urllib
 import urllib2
 
-print "Updating feature service...."
-
+fsFeatureIds = []
+delList = []
 addList = []
-successList = []
 failList = []
+successList = []
+addSuccessList = []
+addFailList = []
 
+answer = "no"
+while answer != "yes":
+        answer = raw_input("This will delete all features in the servivce - type 'yes' to continue.")
+                   
 username = raw_input("Enter ArcGIS Online username: ")
 password = getpass.getpass() #this should prevent echo when run as a binary file
 
-#  dev
-#  fsPath = "http://services.arcgis.com/yourDevFeatureService/FeatureServer/0/"
+fsPath = "http://services.arcgis.com/0L95CJ0VTaxqcmED/ArcGIS/rest/services/ppm_services/FeatureServer/0/"
 
-#  prod - !
-fsPath = "http://services.arcgis.com/yourProdFeatureService/FeatureServer/0/"
+delUrl = fsPath + "deleteFeatures"
 
 print "generate token"
 
@@ -29,27 +34,34 @@ gtResponse = urllib2.urlopen(gtRequest)
 gtJson = json.load(gtResponse)
 token = gtJson['token']
 
-print "add new features"
-new_data = open("new_data.json", "r") #access json file
-new_json_data = json.load(new_data)
+print "query service for object ids to delete"
 
-#add features
-upload = json.dumps(new_json_data['features'])
-addUrl = fsPath + 'addFeatures'
-addValues = { 'f':'json','features': upload ,'token':token}
-addData = urllib.urlencode(addValues)
-addRequest = urllib2.Request(addUrl, addData)
-addResponse = urllib2.urlopen(addRequest)
-responseData = json.load(addResponse)
+#  query service 
+crUrl = fsPath + 'query'
+whereCL= "OBJECTID>0"
+crValues = {'f' : 'json',"where": whereCL , "outFields"  : '*','token' : token, "returnGeometry":False }  #query to fetch all feature data
+crData = urllib.urlencode(crValues)
+crRequest = urllib2.Request(crUrl, crData)
+crResponse = urllib2.urlopen(crRequest)
+crJson = json.load(crResponse)
+featureData = crJson['features']
 
-for response in responseData["addResults"]:
-	if response["success"] == True:
-		successList.append(response["objectId"])
+print "delete features"
+
+#  delete features
+for feature in featureData:
+	delList.append(feature["attributes"]["OBJECTID"]) 
+
+for objectId in delList:
+	delValues = { 'f':'json','objectIDs': objectId,'token':token}
+	delData = urllib.urlencode(delValues)
+	delRequest = urllib2.Request(delUrl, delData)
+	delResponse = urllib2.urlopen(delRequest)
+	responseDataD = json.load(delResponse)
+	if "deleteResults" in responseDataD.keys():
+		successList.append(str(responseDataD["deleteResults"]))
 	else:
-		failList.append(response["objectId"])
-
-print str(len(successList)), "features added,", str(len(failList)), "features failed to add."
+		failList.append(str(responseDataD["deleteResults"]))
+		print str(len(successList)), "features deleted,", str(len(failList)), "features failed to delete."
 
 print 'Script complete.'
-
-new_data.close()
