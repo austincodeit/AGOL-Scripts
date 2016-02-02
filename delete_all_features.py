@@ -1,6 +1,7 @@
 #  delete_all_features.py
 #  deletes all features from an ArcGIS Online feature service
 #  created by John Clary for the Austin Code Department, Nov 2015
+#  thanks to John Schulz, Austin Water
 
 import json
 import requests
@@ -8,20 +9,16 @@ import getpass
 import urllib
 import urllib2
 
-fsFeatureIds = []
 delList = []
-addList = []
 failList = []
 successList = []
-addSuccessList = []
-addFailList = []
 
 answer = ""
 while answer != "yes":
         answer = raw_input("This will delete all features in the servivce - type 'yes' to continue.")
                    
 username = raw_input("Enter ArcGIS Online username: ")
-password = getpass.getpass() #this should prevent echo when run as a binary file
+password = getpass.getpass() #  this should prevent echo when run as a binary file
 
 fsPath = "http://services.arcgis.com/YOUR_FEATURE_SERVICE_NAME/0/" 
 
@@ -42,8 +39,8 @@ print "query service for object ids to delete"
 
 #  query service 
 crUrl = fsPath + 'query'
-whereCL= "OBJECTID>0"
-crValues = {'f' : 'json',"where": whereCL , "outFields"  : '*','token' : token, "returnGeometry":False }  #query to fetch all feature data
+whereCL= "OBJECTID > 0"
+crValues = {'f' : 'json',"where": whereCL , "outFields"  : '*','token' : token, "returnGeometry":False }
 crData = urllib.urlencode(crValues)
 crRequest = urllib2.Request(crUrl, crData)
 crResponse = urllib2.urlopen(crRequest)
